@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>toggleSaveEdit dome</title>
+	<script src="http://apps.bdimg.com/libs/jquery/1.8.1/jquery.min.js"></script>
+</head>
+<body>
+	<!-- 合同抬头 -->
+	<div class="section section-paymethod section-save">
+	   <h3>合同抬头</h3>
+	   <div class="section-content">
+	       <div class="input-wrap cl">
+	           <div class="input-hd"><i class="required">*</i>公司名称：</div>
+	           <div class="input-bd">
+	               <span class="value"></span>
+	               <span class="input-box">
+	                   <input type="text" class="input" placeholder="公司名称必须和美金付款的账号信息一致！">
+	               </span>
+	           </div>
+	           <div class="input-hd"><i class="required">*</i>公司地址：</div>
+	           <div class="input-bd">
+	               <span class="value"></span>
+	               <span class="input-box">
+	                   <input type="text" class="input">
+	               </span>
+	           </div>
+	           <a class="btn-text btn-save" href="javascript:void(0);">保存</a>
+	       </div>
+	   </div>
+	</div>
+	<!-- 内地联系人 -->
+	<div class="section section-contact section-save">
+		<h3>内地联系人</h3>
+	   <div class="section-content">
+	       <div class="input-wrap cl">
+	           <div class="input-hd"><i class="required">*</i>联系人：</div>
+	           <div class="input-bd">
+	               <span class="value"></span>
+	               <span class="input-box">
+	                   <input type="text" class="input input-contact">
+	               </span>
+	           </div>
+	           <div class="input-hd"><i class="required">*</i>手机号码：</div>
+	           <div class="input-bd">
+	               <span class="value"></span>
+	               <span class="input-box">
+	                   <input type="text" class="input input-telphone">
+	               </span>
+	           </div>
+	           <div class="input-hd">联系电话：</div>
+	           <div class="input-bd">
+	               <span class="value"></span>
+	               <span class="input-box">
+	                   <input type="text" class="input tel1" placeholder="区号">&nbsp;&nbsp;-&nbsp;&nbsp;<input type="text" class="input tel2" placeholder="电话号码">&nbsp;&nbsp;-&nbsp;&nbsp;<input type="text" class="input tel3" placeholder="分机号">
+	               </span>
+	           </div>
+	           <a class="btn-text btn-save" href="javascript:void(0);">保存</a>
+	       </div>
+	   </div>
+	</div>
+
+	<script>
+		//编辑保存切换及必要字段验证
+		$.fn.toggleSaveEdit = function(callback) {
+		    var $btn = $(this);
+		    var $parent = $btn.closest('.section');
+		    var $requires = $parent.find('.required');
+		    var $value = $parent.find('.value');
+		    var $inputWrap = $parent.find('.input-box');
+		    $btn.each(function() {
+		        $btn = $(this);
+		        $btn.on('click', function() {
+		            if ($btn.hasClass('btn-save')) {
+		                var correct = true;
+		                $value.each(function(index, ele) {
+		                    var $me = $(this);
+		                    var $nextWrap = $me.next('.input-box');
+		                    var $nextInput = $nextWrap.find('.input');
+		                    var tempStr = '';
+		                    if ($nextInput.length > 1) {
+		                        $nextInput.each(function(index, ele) {
+		                            tempStr += $(this).val() + ' ';
+		                        });
+		                    } else {
+		                        tempStr += $nextInput.val();
+		                    }
+		                    tempStr = $.trim(tempStr);
+
+		                    var $inputHd = $me.closest('.input-bd').prev('.input-hd');
+		                    var isMust = $inputHd.find('.required').length;
+		                    if (isMust && tempStr == '') {
+		                        alert($inputHd.text().replace('*', '') + '不能为空！');
+		                        correct = false;
+		                        return correct;
+		                    }
+		                    $me.text(tempStr).hide();
+		                });
+		                if (correct) {
+		                    $btn.text('修改').toggleClass('btn-save btn-edit');
+		                    $parent.toggleClass('section-edit section-save');
+		                    $value.show();
+		                    $requires.hide();
+		                    $inputWrap.hide();
+		                    //回调，一般 用于post提交数据
+		                    callback && callback();
+		                }
+		            } else {
+		                $btn.text('保存').toggleClass('btn-save btn-edit');
+		                $parent.toggleClass('section-edit section-save');
+		                $value.hide();
+		                $requires.show();
+		                $inputWrap.show();
+		            }
+		        });
+		    });
+		};
+		$('.section-paymethod .btn-text').toggleSaveEdit();
+		$('.section-contact .btn-text').toggleSaveEdit();
+	</script>
+</body>
+</html>
